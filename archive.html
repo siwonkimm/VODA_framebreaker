@@ -119,7 +119,7 @@
 
   <nav class="nav">
     <span class="logo">context<span>lens</span></span>
-    <button class="btn-upload">
+    <button class="btn-upload" id="navUploadBtn">
       <i class="ti ti-upload"></i> 결과 업로드
     </button>
   </nav>
@@ -139,11 +139,10 @@
     </div>
 
     <div class="grid">
-      <!-- 카드 1 -->
-      <div class="card">
+      <div class="card" id="mzCard">
         <div class="card-top">
           <span class="badge news">뉴스</span>
-          <span class="card-date">2025.06.12</span>
+          <span class="card-date">2026.06.12</span>
         </div>
         <div class="card-keyword">"MZ세대" 근연도 분석</div>
         <div class="card-desc">갈등, 태도, 문제 등 부정적 뉘앙스의 단어와 높은 유사도를 보임.</div>
@@ -155,11 +154,10 @@
         </div>
       </div>
 
-      <!-- 카드 2 -->
       <div class="card">
         <div class="card-top">
           <span class="badge community">커뮤니티</span>
-          <span class="card-date">2025.06.10</span>
+          <span class="card-date">2026.06.10</span>
         </div>
         <div class="card-keyword">"기후위기" 근연도 분석</div>
         <div class="card-desc">불안, 위기감과 관련된 단어의 유사도가 상위권에 집중됨.</div>
@@ -171,11 +169,10 @@
         </div>
       </div>
 
-      <!-- 카드 3 -->
       <div class="card">
         <div class="card-top">
           <span class="badge mixed">뉴스+커뮤</span>
-          <span class="card-date">2025.06.08</span>
+          <span class="card-date">2026.06.08</span>
         </div>
         <div class="card-keyword">"청년실업" 근연도 분석</div>
         <div class="card-desc">체념, 구조적 원인 관련 단어와의 유사도가 두드러지게 나타남.</div>
@@ -187,13 +184,29 @@
         </div>
       </div>
 
-      <!-- 추가 카드 -->
-      <div class="card-add">
+      <div class="card-add" id="cardAddBtn">
         <i class="ti ti-plus"></i>
         새 분석 결과 추가
       </div>
     </div>
   </main>
+
+  <script>
+    // 1. 상단 '결과 업로드' 버튼 클릭 시 이동
+    document.getElementById('navUploadBtn').addEventListener('click', () => {
+      location.href = 'upload.html';
+    });
+
+    // 2. 우측 하단 '새 분석 결과 추가' 박스 클릭 시 이동
+    document.getElementById('cardAddBtn').addEventListener('click', () => {
+      location.href = 'upload.html';
+    });
+
+    // 3. "MZ세대" 카드 클릭 시 상세 대시보드(detail.html)로 이동
+    document.getElementById('mzCard').addEventListener('click', () => {
+      location.href = 'detail.html';
+    });
+  </script>
 
 </body>
 </html>
