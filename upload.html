@@ -144,66 +144,72 @@
 
   <nav class="nav">
     <span class="logo">context<span>lens</span></span>
-    <button class="back-btn">
+    <button class="back-btn" id="btnBack">
       <i class="ti ti-arrow-left"></i> 아카이브로 돌아가기
     </button>
   </nav>
 
-  <main class="main">
+  <form class="main" id="uploadForm">
     <h1 class="page-title">분석 결과 업로드</h1>
-    <p class="page-sub">엑셀 파일과 분석 설명을 입력해주세요</p>
+    <p class="page-sub">분석 정보와 JSON 데이터를 입력해주세요</p>
 
-    <!-- 닉네임 -->
     <div class="section">
       <label class="label">닉네임</label>
-      <input type="text" placeholder="공개될 닉네임을 입력하세요">
+      <input type="text" id="uploaderName" placeholder="공개될 닉네임을 입력하세요">
     </div>
 
-    <!-- 출처 -->
+    <div class="section">
+      <label class="label">분석 키워드</label>
+      <input type="text" id="targetKeyword" placeholder="예) MZ세대, 기후위기">
+    </div>
+
     <div class="section">
       <label class="label">조사 출처</label>
       <div class="source-group">
-        <div class="source-btn active">뉴스</div>
-        <div class="source-btn">커뮤니티</div>
-        <div class="source-btn">혼합</div>
+        <div class="source-btn active" data-source="news">뉴스</div>
+        <div class="source-btn" data-source="community">커뮤니티</div>
+        <div class="source-btn" data-source="mixed">혼합</div>
       </div>
     </div>
 
-    <!-- 분석 설명 -->
+    <div class="section">
+      <label class="label">분석 기간</label>
+      <input type="text" id="analysisPeriod" placeholder="예) 2026.01 - 2026.06">
+    </div>
+
     <div class="section">
       <label class="label">분석 설명</label>
       <p class="sublabel">아카이브 카드에 표시됩니다</p>
-      <textarea placeholder="예) MZ세대 옆에 갈등, 태도, 문제 등 부정적 단어의 유사도가 상위권에 집중됨."></textarea>
+      <textarea id="analysisDesc" placeholder="예) MZ세대 옆에 갈등, 태도, 문제 등 부정적 단어의 유사도가 상위권에 집중됨."></textarea>
     </div>
 
-    <!-- 수집 건수 -->
     <div class="section">
       <label class="label">수집 건수</label>
-      <p class="sublabel">분석에 사용된 기사 수를 입력하세요</p>
-      <input type="text" placeholder="예) 1240">
+      <p class="sublabel">분석에 사용된 데이터 건수를 입력하세요</p>
+      <input type="text" id="totalCount" placeholder="예) 1240">
     </div>
 
-    <!-- 태그 -->
     <div class="section">
       <label class="label">태그</label>
       <p class="sublabel">쉼표로 구분해서 입력하세요</p>
-      <input type="text" placeholder="예) 세대, 미디어, 청년">
+      <input type="text" id="tags" placeholder="예) 세대, 미디어, 청년">
     </div>
 
-    <!-- 파일 업로드 -->
     <div class="section">
-      <label class="label">엑셀 파일</label>
-      <p class="sublabel">근연도 분석 결과 파일을 첨부하세요</p>
-      <div class="file-drop">
-        <i class="ti ti-file-spreadsheet"></i>
-        <span class="file-drop-title">파일을 끌어다 놓거나 클릭해서 선택</span>
-        <span class="file-drop-sub">.xlsx 파일만 가능</span>
+      <label class="label">분석 결과 파일</label>
+      <p class="sublabel">근연도 분석 결과 JSON 파일을 첨부하세요</p>
+      
+      <input type="file" id="jsonFile" accept=".json" style="display: none;">
+      
+      <div class="file-drop" id="dropZone">
+        <i class="ti ti-file-code"></i>
+        <span class="file-drop-title" id="fileTitle">파일을 끌어다 놓거나 클릭해서 선택</span>
+        <span class="file-drop-sub">.json 파일만 가능</span>
       </div>
     </div>
 
     <div class="divider"></div>
 
-    <!-- 자동 처리 항목 -->
     <div class="auto-section">
       <div class="auto-title">자동으로 처리되는 정보</div>
       <div class="auto-row">
@@ -211,17 +217,107 @@
         <span class="auto-val">업로드 시 자동 기록</span>
       </div>
       <div class="auto-row">
-        <span class="auto-key">타겟 키워드</span>
-        <span class="auto-val">엑셀 파일에서 자동 추출</span>
-      </div>
-      <div class="auto-row">
-        <span class="auto-key">워드클라우드 시각화</span>
-        <span class="auto-val">엑셀 데이터 기반 자동 생성</span>
+        <span class="auto-key">시각화 차트 생성</span>
+        <span class="auto-val">JSON 데이터 기반 자동 렌더링</span>
       </div>
     </div>
 
-    <button class="submit-btn">업로드하기</button>
-  </main>
+    <button type="submit" class="submit-btn">업로드하기</button>
+  </form>
+
+  <script>
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('jsonFile');
+    const fileTitle = document.getElementById('fileTitle');
+    const uploadForm = document.getElementById('uploadForm');
+    const btnBack = document.getElementById('btnBack');
+
+    // 1. 뒤로가기 버튼 링크 연동
+    btnBack.addEventListener('click', () => {
+      location.href = 'archive.html';
+    });
+
+    // 2. 출처 선택 토글 UI 제어
+    const sourceBtns = document.querySelectorAll('.source-btn');
+    sourceBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        sourceBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+
+    // 3. 파일 드롭박스 클릭 및 Drag & Drop 제어
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.style.borderColor = '#2563eb';
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.style.borderColor = '#c0c0c0';
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.style.borderColor = '#c0c0c0';
+      if (e.dataTransfer.files.length > 0) {
+        fileInput.files = e.dataTransfer.files;
+        handleFileSelect(e.dataTransfer.files[0]);
+      }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        handleFileSelect(e.target.files[0]);
+      }
+    });
+
+    // 4. 진짜 파일 데이터 파싱 및 유효성 검증 핵심 로직
+    function handleFileSelect(file) {
+      if (!file.name.endsWith('.json')) {
+        alert('❌ JSON 파일만 업로드할 수 있습니다!');
+        fileInput.value = '';
+        fileTitle.textContent = "파일을 끌어다 놓거나 클릭해서 선택";
+        fileTitle.style.color = "#555";
+        return;
+      }
+
+      fileTitle.textContent = "✓ 연결된 파일: " + file.name;
+      fileTitle.style.color = "#2563eb";
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        try {
+          const jsonData = JSON.parse(event.target.result);
+          console.log("=== 파싱된 JSON 데이터 결과 ===", jsonData);
+          
+          // 데이터 내부 규격 검사
+          if (!jsonData.keyword || !jsonData.related_words) {
+            alert("⚠️ 경고: 데이터 규격이 올바르지 않습니다. (keyword 또는 related_words 구조 유실)");
+          } else {
+            alert(`✅ 구조 확인 성공! 분석 대상 키워드: [ ${jsonData.keyword} ] 데이터가 확인되었습니다.`);
+          }
+        } catch (err) {
+          alert("❌ 올바른 JSON 포맷 형식이 아닙니다. 파일 내용을 다시 확인해 주세요.");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // 5. 최종 폼 서밋 버튼 이벤트
+    uploadForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      if (!fileInput.files[0]) {
+        alert("분석 결과 JSON 파일을 먼저 첨부해 주세요!");
+        return;
+      }
+
+      alert("🎉 데이터 처리가 완료되었습니다!\n(공모전 프로토타입 단계 완료: 메인 아카이브로 이동합니다.)");
+      location.href = 'archive.html';
+    });
+  </script>
 
 </body>
 </html>
